@@ -27,6 +27,13 @@ const getContact = asyncHandler(async (req, res) => {
 //@description Create contacts
 //@route POST /api/contacts
 //@access private
+//Payload Ex: 
+// {
+//   "name": "test-contact-2",
+//   "email": "Test-contact-2@gmail.com",
+//   "phone": "test123"
+// }
+
 const createContact = asyncHandler(async (req, res) => {
   console.log("REQ body is: " + req.body);
   const { name, email, phone } = req.body;
@@ -34,12 +41,14 @@ const createContact = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
+  console.log('Req body :'+ JSON.stringify(req.body));
   const contact = await Contact.create({
     name,
     email,
     phone,
     user_id: req.user.id
   });
+  console.log('Created conttcat');
   res.status(201).json({ message: "Contact Created", contact });
 });
 
@@ -84,7 +93,7 @@ const deleteContact = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error("User don't have permission to update other user contacts");
   }
-  
+
   const deletedContact = await Contact.findByIdAndDelete(req.params.id);
   res
     .status(200)
